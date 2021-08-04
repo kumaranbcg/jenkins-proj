@@ -12,8 +12,6 @@ pipeline {
 					// sh "cd ${env.WORKSPACE}"
 					echo "branch name : ${env.BRANCH_NAME}"
 					env.COMMIT = bat(returnStdout: true, script: 'echo $(git rev-parse --short HEAD)').trim()
-					env.GIT_COMMIT_MSG = bat (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim()
-					env.GIT_AUTHOR = bat (script: 'git log -1 --pretty=%cn ${GIT_COMMIT}', returnStdout: true).trim()                    
                     env.TAG = "${env.BRANCH_NAME}" + "-" + "${BUILD_NUMBER}"
 					echo "Tag : ${env.TAG}"
                     env.IMAGE = "vcalatest" + ":" + "${env.TAG}"
