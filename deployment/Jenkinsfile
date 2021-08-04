@@ -34,7 +34,7 @@ pipeline {
               {
                 script
                  {
-                     bat("aws2 ecr get-login --no-include-email")
+                     bat("aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 839316227584.dkr.ecr.ap-south-1.amazonaws.com")
                      docker.withRegistry("${env.DOCKERPUSHURL}", "ecr:ap-south-1:aws-creds") {
                      docker.image("${env.IMAGE}").push()
                      bat "docker rmi ${env.IMAGE} | true"
