@@ -7,34 +7,39 @@ pipeline {
         stage("Env Variables") {
             steps {
                 script {
-					env.ECRREPOURI = "839316227584.dkr.ecr.ap-south-1.amazonaws.com/idp-vca"
-					env.DOCKERPUSHURL = "https://839316227584.dkr.ecr.ap-south-1.amazonaws.com/idp-vca"
-                    // sh "cd ${env.WORKSPACE}"
+					env.ECRREPOURI = "839316227584.dkr.ecr.ap-south-1.amazonaws.com/idp-vca-service"
+					env.DOCKERPUSHURL = "https://839316227584.dkr.ecr.ap-south-1.amazonaws.com/idp-vca-service"
+					sh "cd ${env.WORKSPACE}"
 					echo "branch name : ${env.BRANCH_NAME}"
-					env.COMMIT = bat(returnStdout: true, script: 'echo $(git rev-parse --short HEAD)').trim()
+					env.COMMIT = sh(returnStdout: true, script: 'echo $(git rev-parse --short HEAD)').trim()
+					env.GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim()
+					env.GIT_AUTHOR = sh (script: 'git log -1 --pretty=%cn ${GIT_COMMIT}', returnStdout: true).trim()                    
                     env.TAG = "${env.BRANCH_NAME}" + "-" + "${BUILD_NUMBER}"
 					echo "Tag : ${env.TAG}"
-                    env.IMAGE = "vcalatest" + ":" + "${env.TAG}"
-                    env.FILENAME = "deployment/idp-vca-deployment.yml"
+                    env.IMAGE = "${env.ECRREPOURI}" + ":" + "${env.TAG}"
                     
                 } //script end           
             } //steps end
         } // env Variables stage end
         
-        stage("Docker build") {
-            steps {
-                bat """ 
-                    docker build . -t ${env.ECRREPOURI}:${env.TAG} -f ${env.WORKSPACE}/deployment/Dockerfile
-                """
-            } // steps end
-        } // docker build stage end
+            stage("Docker build") {
+                steps {
+                    sh """ 
+                        docker build . -t ${env.ECRREPOURI}:${env.TAG} -f ${env.WORKSPACE}/deployment/Dockerfile
+                    """
+                } // steps end
+            } // docker build stage end
 
         stage("Docker push to AWS ECR") {
             steps
               {
                 script
                  {
-                     bat "docker push ${env.ECRREPOURI}:${env.TAG}"
+                     sh("eval \$(aws2 ecr get-login --no-include-email)")
+                     docker.withRegistry("${env.DOCKERPUSHURL}", "ecr:ap-south-1:aws-creds") {
+                     docker.image("${env.IMAGE}").push()
+                     sh "docker rmi ${env.IMAGE} | true"
+                    } //docker withRegistry end
                 } //script end
             } // steps end
         } //  docker push stage end
