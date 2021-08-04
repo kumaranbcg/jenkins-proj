@@ -9,7 +9,6 @@ pipeline {
                 script {
 					env.ECRREPOURI = "839316227584.dkr.ecr.ap-south-1.amazonaws.com/idp-vca"
 					env.DOCKERPUSHURL = "https://839316227584.dkr.ecr.ap-south-1.amazonaws.com/idp-vca"
-					bat "bash"
                     // sh "cd ${env.WORKSPACE}"
 					echo "branch name : ${env.BRANCH_NAME}"
 					env.COMMIT = bat(returnStdout: true, script: 'echo $(git rev-parse --short HEAD)').trim()
@@ -35,7 +34,7 @@ pipeline {
               {
                 script
                  {
-                     bat("eval \$(aws2 ecr get-login --no-include-email)")
+                     bat("aws2 ecr get-login --no-include-email")
                      docker.withRegistry("${env.DOCKERPUSHURL}", "ecr:ap-south-1:aws-creds") {
                      docker.image("${env.IMAGE}").push()
                      bat "docker rmi ${env.IMAGE} | true"
