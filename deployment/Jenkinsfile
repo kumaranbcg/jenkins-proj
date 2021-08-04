@@ -9,7 +9,8 @@ pipeline {
                 script {
 					env.ECRREPOURI = "839316227584.dkr.ecr.ap-south-1.amazonaws.com/idp-vca"
 					env.DOCKERPUSHURL = "https://839316227584.dkr.ecr.ap-south-1.amazonaws.com/idp-vca"
-					// sh "cd ${env.WORKSPACE}"
+					bat "bash"
+                    // sh "cd ${env.WORKSPACE}"
 					echo "branch name : ${env.BRANCH_NAME}"
 					env.COMMIT = bat(returnStdout: true, script: 'echo $(git rev-parse --short HEAD)').trim()
                     env.TAG = "${env.BRANCH_NAME}" + "-" + "${BUILD_NUMBER}"
