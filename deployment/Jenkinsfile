@@ -24,7 +24,7 @@ pipeline {
         stage("Docker build") {
             steps {
                 bat """ 
-                    docker build . -t vcalatest:${env.TAG} -f ${env.WORKSPACE}/deployment/Dockerfile
+                    docker build . -t ${env.ECRREPOURI}:${env.TAG} -f ${env.WORKSPACE}/deployment/Dockerfile
                 """
             } // steps end
         } // docker build stage end
@@ -34,7 +34,7 @@ pipeline {
               {
                 script
                  {
-                     bat "docker push 839316227584.dkr.ecr.ap-south-1.amazonaws.com/vcalatest:${env.TAG}"
+                     bat "docker push ${env.ECRREPOURI}:${env.TAG}"
                 } //script end
             } // steps end
         } //  docker push stage end
