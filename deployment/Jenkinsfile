@@ -34,7 +34,6 @@ pipeline {
               {
                 script
                  {
-                     bat "docker build -t idp-vca ."
                      bat "docker tag idp-vca:latest 839316227584.dkr.ecr.ap-south-1.amazonaws.com/idp-vca:latest"
                      bat "docker push 839316227584.dkr.ecr.ap-south-1.amazonaws.com/idp-vca:latest"
                 } //script end
