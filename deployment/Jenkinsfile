@@ -9,7 +9,7 @@ pipeline {
                 script {
 					// env.ECRREPOURI = "707200824006.dkr.ecr.ap-south-1.amazonaws.com/idp-vca-service"
 					// env.DOCKERPUSHURL = "https://707200824006.dkr.ecr.ap-south-1.amazonaws.com/idp-vca-service"
-					sh "cd ${env.WORKSPACE}"
+					// sh "cd ${env.WORKSPACE}"
 					echo "branch name : ${env.BRANCH_NAME}"
 					env.COMMIT = sh(returnStdout: true, script: 'echo $(git rev-parse --short HEAD)').trim()
 					env.GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim()
