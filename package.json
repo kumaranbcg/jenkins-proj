@@ -1,16 +1,60 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0",
-    "react-scripts": "^4.0.3"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  }
+    "name": "vca_micro_service",
+    "version": "1.0.0",
+    "description": "VCA Micro Service",
+    "main": "app.js",
+    "jest": {
+        "testEnvironment": "node",
+        "coveragePathIgnorePatterns": [
+            "/node_modules/"
+        ]
+    },
+    "scripts": {
+        "start": "node app.js",
+        "localdev": "cross-env NODE_ENV=localdev cross-env DB_NAME=VCA cross-env DEV_DB_USERNAME=root cross-env DEV_DB_PASSWORD= cross-env DEV_DB_HOST=localhost node app.js",
+        "qa": "cross-env NODE_ENV=qa cross-env DB_NAME=VCA cross-env DEV_DB_USERNAME=admin cross-env cross-env DEV_DB_PASSWORD=Amtex4ClientA2TNRTP42Aws DEV_DB_HOST=tnrtp-qa.cftg9stc20rq.ap-south-1.rds.amazonaws.com node app.js",
+        "staging": "cross-env NODE_ENV=staging cross-env DB_NAME=VCA cross-env DEV_DB_USERNAME=admin cross-env DEV_DB_PASSWORD=Amtex4ClientA2TNRTP42Aws cross-env DEV_DB_HOST=tnrtp-stage-new.cftg9stc20rq.ap-south-1.rds.amazonaws.com node app.js",
+        "development": "cross-env NODE_ENV=development cross-env DB_NAME=VCA cross-env DEV_DB_USERNAME=admin cross-env DEV_DB_PASSWORD=Amtex4ClientA2TNRTP42Aws cross-env DEV_DB_HOST=tnrtp-stage-new.cftg9stc20rq.ap-south-1.rds.amazonaws.com node app.js",
+        "production": "cross-env NODE_ENV=production cross-env DB_NAME=VCA cross-env DEV_DB_USERNAME=admin cross-env DEV_DB_PASSWORD=Amtex4ClientA2TNRTP42Aws cross-env DEV_DB_HOST=tnrtp-prod.cftg9stc20rq.ap-south-1.rds.amazonaws.com node app.js",
+        "test": "cross-env NODE_ENV=test cross-env PORT=3000 cross-env DB_NAME=VCA_TEST cross-env DEV_DB_USERNAME=root cross-env DEV_DB_PASSWORD= cross-env DEV_DB_HOST=localhost npx sequelize-cli db:drop && cross-env NODE_ENV=test cross-env PORT=3000 cross-env DB_NAME=VCA_TEST cross-env DEV_DB_USERNAME=root cross-env DEV_DB_PASSWORD= cross-env DEV_DB_HOST=localhost npx sequelize-cli db:create && cross-env NODE_ENV=test cross-env PORT=3000 cross-env DB_NAME=VCA_TEST cross-env DEV_DB_USERNAME=root cross-env DEV_DB_PASSWORD= cross-env DEV_DB_HOST=localhost npx sequelize-cli db:migrate && cross-env NODE_ENV=test cross-env PORT=3000 cross-env DB_NAME=VCA_TEST cross-env DEV_DB_USERNAME=root cross-env DEV_DB_PASSWORD= cross-env DEV_DB_HOST=localhost npx sequelize-cli db:seed:all && cross-env NODE_ENV=test cross-env PORT=3000 cross-env DB_NAME=VCA_TEST cross-env DEV_DB_USERNAME=root cross-env DEV_DB_PASSWORD= cross-env DEV_DB_HOST=localhost jest --coverage && cross-env NODE_ENV=test cross-env PORT=3000 cross-env DB_NAME=VCA_TEST cross-env DEV_DB_USERNAME=root cross-env DEV_DB_PASSWORD= cross-env DEV_DB_HOST=localhost npx sequelize-cli db:drop",
+        "lint": "eslint --fix --config .eslintrc.json \"**/*.js\""
+    },
+    "author": "Kumaran",
+    "license": "ISC",
+    "dependencies": {
+        "aws-sdk": "^2.848.0",
+        "axios": "^0.21.1",
+        "bcrypt": "^5.0.0",
+        "body-parser": "^1.19.0",
+        "chalk": "^4.1.0",
+        "cors": "^2.8.5",
+        "crypto-js": "^4.0.0",
+        "cryptr": "^6.0.2",
+        "eslint": "^7.29.0",
+        "express": "^4.17.1",
+        "helmet": "^3.23.3",
+        "joi": "^17.1.1",
+        "joi-date-extensions": "^1.2.0",
+        "jsonwebtoken": "^8.5.1",
+        "lodash": "^4.17.20",
+        "moment": "^2.27.0",
+        "morgan": "^1.10.0",
+        "multer": "^1.4.2",
+        "multer-s3": "^2.9.0",
+        "mysql2": "^2.1.0",
+        "nodemailer": "^6.6.0",
+        "pdfmake": "^0.1.71",
+        "sequelizer": "^1.1.4",
+        "swagger-ui-express": "^4.1.6",
+        "winston": "^3.3.3",
+        "winston-daily-rotate-file": "^4.5.0",
+        "xlsx": "^0.17.0"
+    },
+    "devDependencies": {
+        "cross-env": "^7.0.3",
+        "dotenv": "^8.6.0",
+        "jest": "^26.6.3",
+        "sequelize-cli": "^6.2.0",
+        "supertest": "^6.1.3"
+    }
 }

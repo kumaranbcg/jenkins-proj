@@ -1,0 +1,57 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "VCA",
+        "contact": {},
+        "version": "v1"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:2173/vca/v1/api",
+            "description": "Local"
+        },
+        {
+            "url": "https://qa-api.tnrtp.org/idp-vca-service/vca/v1/api",
+            "description": "QA"
+        },
+        {
+            "url": "https://staging-api.tnrtp.org/idp-vca-service/vca/v1/api",
+            "description": "Staging"
+        },
+        {
+            "url": "https://dev-api.tnrtp.org/idp-vca-service/vca/v1/api",
+            "description": "Development"
+        },
+        {
+            "url": "https://prod-api.tnrtp.org/idp-vca-service/ydb/v1/api",
+            "description": "Production"
+        }
+    ],
+    "security": [
+        {
+            "Authorization": [],
+            "token": []
+        }
+    ],
+    "tags": [
+        {
+            "name": "VCA Off Farm Dairy Report"
+        }
+    ],
+    "paths": {},
+    "components": {
+        "schemas": {},
+        "securitySchemes": {
+            "Authorization": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "authorization"
+            },
+            "token": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "token"
+            }
+        }
+    }
+}
