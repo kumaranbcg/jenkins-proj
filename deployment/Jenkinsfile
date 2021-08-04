@@ -34,7 +34,7 @@ pipeline {
               {
                 script
                  {
-                     bat "docker push 839316227584.dkr.ecr.ap-south-1.amazonaws.com/idp-vca:latest"
+                     bat "docker push 839316227584.dkr.ecr.ap-south-1.amazonaws.com/vcalatest:${env.TAG}"
                 } //script end
             } // steps end
         } //  docker push stage end
