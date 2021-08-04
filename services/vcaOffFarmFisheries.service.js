@@ -19,7 +19,7 @@ class OffFarmFisheriesService {
         } catch (err) {
             return { code: errorCodes.HTTP_INTERNAL_SERVER_ERROR, message: err };
         }
-    }
+    } //
     async vcaOffFarmFisheriesGeographySerivce(params) {
         try {
             const { reportId, applicationStatus, userData } = params;
