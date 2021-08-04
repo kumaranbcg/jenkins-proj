@@ -35,7 +35,7 @@ pipeline {
               {
                 script
                  {
-                     sh("eval \$(aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 839316227584.dkr.ecr.ap-south-1.amazonaws.com)")
+                     sh("eval \$(aws ecr get-login-password)")
                      docker.withRegistry("${env.DOCKERPUSHURL}", "ecr:ap-south-1:aws-creds") {
                      docker.image("${env.IMAGE}").push()
                      sh "docker rmi ${env.IMAGE} | true"
