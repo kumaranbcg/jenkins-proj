@@ -52,16 +52,18 @@ pipeline {
         //     } //steps end
         // } //Replacing yaml Variables stage end
 
-        // stage("k8S file deployment") {
-        //     steps {
-        //        script{                 
-        //                 withKubeConfig(caCertificate: '', clusterName: 'tnrtpprod', contextName: '', credentialsId: "${env.BRANCH_NAME}", namespace: '', serverUrl: 'https://CB2C3AE7FB9F916362DEAE6B0B9690AD.sk1.ap-south-1.eks.amazonaws.com') {
-        //                 sh "kubectl apply -f ${WORKSPACE}/${env.FILENAME}"
-		// 				//sh "kubectl get svc -n tnrtp-qa"
-        //              }  // withKubeConfig end 
-                    
-        //         } //script end
-        //     } // steps end
-        // } //  k8S deployment file deployment stage end
+        stage("Deploy in ECS") {
+            steps {
+               script{                 
+                       withAWS(region: 'ap-south-1', credentials: 'aws-creds') {
+                        def updateService = "aws ecs update-service --service myservice --cluster mycluster --force-new-deployment"
+                        def runUpdateService = sh(returnStdout: true, script: updateService)
+                        def serviceStable = "aws ecs wait services-stable --service $internationalService --cluster $internationalCluster"
+                        sh(returnStdout: true, script: serviceStable)
+                        // put all your slack messaging here
+                    }              
+                } //script end
+            } // steps end
+        } //  k8S deployment file deployment stage end
     } //stages end
 } //pipeline end
