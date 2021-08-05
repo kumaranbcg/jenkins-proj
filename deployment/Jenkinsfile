@@ -36,8 +36,7 @@ pipeline {
                   script {
                     withAWS(region: 'ap-south-1', credentials: 'aws-creds') {
                         sh "${ecrLogin()}"
-                        sh "docker tag ${env.IMAGE} ${env.DOCKERPUSHURL}"
-                        sh "docker push ${env.DOCKERPUSHURL}"
+                        sh "docker push ${env.IMAGE}"
                     }
                 }
             } // steps end
