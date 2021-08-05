@@ -4,7 +4,7 @@ const errorCodes = require("./../config/errorCodes.js");
 const { DELETE_STATUS } = require("../constants");
 const { sequelize } = models;
 
-class MastersService {} //
+class MastersService {}
 
 MastersService.prototype.getDistrictListSerivce = async (params) => {
     try {
