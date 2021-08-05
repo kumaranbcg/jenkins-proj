@@ -73,12 +73,10 @@ pipeline {
                 }
             } // steps end
         } //  k8S deployment file deployment stage end
-        stage("Clear Workspace") {
-            post { 
-                always { 
-                    cleanWs()
-                }
-            }
-        }
     } //stages end
+    post { 
+        always { 
+            cleanWs()
+        }
+    }
 } //pipeline end
