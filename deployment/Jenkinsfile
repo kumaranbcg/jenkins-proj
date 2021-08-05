@@ -33,14 +33,13 @@ pipeline {
         stage("Docker push to AWS ECR") {
             steps
               {
-                script
-                 {
-                     sh("eval \$(aws ecr get-login-password)")
-                     docker.withRegistry("${env.DOCKERPUSHURL}", "ecr:ap-south-1:aws-creds") {
-                     docker.image("${env.IMAGE}").push()
-                     sh "docker rmi ${env.IMAGE} | true"
-                    } //docker withRegistry end
-                } //script end
+                  script {
+                    withAWS(region: 'ap-south-1', credentials: 'aws-creds') {
+                        sh "${ecrLogin()}"
+                        sh "docker tag ${env.IMAGE} ${env.DOCKERPUSHURL}"
+                        sh "docker push ${env.DOCKERPUSHURL}"
+                    }
+                }
             } // steps end
         } //  docker push stage end
 
