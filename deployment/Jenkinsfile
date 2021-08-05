@@ -58,7 +58,7 @@ pipeline {
                        withAWS(region: 'ap-south-1', credentials: 'aws-creds') {
                         def updateService = "aws ecs update-service --service myservice --cluster mycluster --force-new-deployment"
                         def runUpdateService = sh(returnStdout: true, script: updateService)
-                        def serviceStable = "aws ecs wait services-stable --service $internationalService --cluster $internationalCluster"
+                        def serviceStable = "aws ecs wait services-stable --service myservice --cluster mycluster"
                         sh(returnStdout: true, script: serviceStable)
                         // put all your slack messaging here
                     }              

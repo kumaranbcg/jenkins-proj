@@ -4,7 +4,7 @@ const env = process.env.NODE_ENV || "development";
 const moment = require("moment");
 const dateTime = moment().add(5, "hours").add(30, "minutes").format("DD-MMM-YYYY hh:mm:ss a");
 router.use((req, res, next) => {
-    if (/healthCheck/gi.test(req.url)) {
+    if (req.url == "/") {
         res.send(`
             <table>
                 <tbody>
