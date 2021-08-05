@@ -73,5 +73,10 @@ pipeline {
                 }
             } // steps end
         } //  k8S deployment file deployment stage end
+        post { 
+            always { 
+                cleanWs()
+            }
+        }
     } //stages end
 } //pipeline end
