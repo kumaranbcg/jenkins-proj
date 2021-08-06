@@ -66,18 +66,16 @@ pipeline {
             steps{
                  script {
                      withAWS(region: 'ap-south-1', credentials: 'aws-creds') {
-                         sh '''
-                            TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition mytask --region ap-south-1)
-                            TASK_LIST=$(aws ecs list-tasks --cluster mycluster --desired-status RUNNING --family mytask)
-                            OLD_TASK_ID=$(echo $TASK_LIST | jq -r '.taskArns[0]' | awk -F'/' '{print $3}')
-                            aws ecs stop-task --region ap-south-1 --cluster mycluster --task $OLD_TASK_ID
-                            NEW_TASK_DEFINTIION=$(echo $TASK_DEFINITION | jq --arg IMAGE ${IMAGE} '.taskDefinition' | jq '.containerDefinitions[0].image = ${IMAGE}')
-                            NEW_TASK_DEFINTIION=$(echo $NEW_TASK_DEFINTIION | jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
-                            NEW_TASK_INFO=$(aws ecs register-task-definition --region $AWS_DEFAULT_REGION --cli-input-json "$NEW_TASK_DEFINTIION")
-                            NEW_REVISION=$(echo $NEW_TASK_INFO | jq '.taskDefinition.revision')
-                            aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:${NEW_REVISION}
-                            echo $BRANCH_NAME
-                         '''
+                         sh """
+                                TASK_DEFINITION=\$(aws ecs describe-task-definition --task-definition mytask --region ap-south-1)
+                                TASK_LIST=\$(aws ecs list-tasks --cluster mycluster --desired-status RUNNING --family mytask)
+                                OLD_TASK_ID=\$(echo \${TASK_LIST} | jq -r '.taskArns[0]' | awk -F'/' '{print \$3}')
+                                aws ecs stop-task --region ap-south-1 --cluster mycluster --task \${OLD_TASK_ID}
+                                NEW_TASK_DEFINTIION=\$(echo \${TASK_DEFINITION} | jq '.taskDefinition' | jq --arg IMAGE_DATA "\$IMAGE" '.containerDefinitions[0].image = \$IMAGE_DATA' | jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
+                                NEW_TASK_INFO=\$(aws ecs register-task-definition --region \${AWS_DEFAULT_REGION} --cli-input-json "\${NEW_TASK_DEFINTIION}")
+                                NEW_REVISION=\$(echo \${NEW_TASK_INFO} | jq '.taskDefinition.revision')
+                                aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:\${NEW_REVISION}
+                            """
                      }
                 }
             }
