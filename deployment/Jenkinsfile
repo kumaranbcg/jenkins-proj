@@ -65,7 +65,7 @@ pipeline {
             steps {
               script {
                     sh "aws ecs register-task-definition --region ${AWS_ECR_REGION} --family ${AWS_ECS_TASK_DEFINITION} --execution-role-arn ${AWS_ECS_EXECUTION_ROL} --requires-compatibilities ${AWS_ECS_COMPATIBILITY} --network-mode ${AWS_ECS_NETWORK_MODE} --cpu ${AWS_ECS_CPU} --memory ${AWS_ECS_MEMORY} --container-definitions --container-definitions \"[{ \"name\":\"${AWS_ECS_TASK_DEFINITION}\",\"image\":\"${env.ECRREPOURI}:${env.IMAGE_TAG}}]\""
-                    def taskRevision = sh(script: "aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\" | tr \"/\" \" \" | awk '{print \$2}' | sed 's/\"\$//'", returnStdout: true)
+                    def taskRevision = sh(script: "aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\" | tr \"/\" \" \" | awk '{print \$2}' | sed 's/,//'", returnStdout: true)
                     sh "aws ecs update-service --cluster ${AWS_ECS_CLUSTER} --service ${AWS_ECS_SERVICE} --task-definition ${AWS_ECS_TASK_DEFINITION}:${taskRevision}"
                 }
             } // steps end
@@ -77,3 +77,8 @@ pipeline {
         }
     }
 } //pipeline end
+// aws ecs register-task-definition --family mytask --execution-role-arn arn:a ws:iam::839316227584:role/ecsTaskExecutionRole --requires-compatibilities FARGATE --network-mode awsvpc --cpu 256 --memory 512 --container-definitions "[{ \"name\":\"mytask\",\"image\":\"839316227584.dkr.ecr.ap-south-1.a mazonaws.com:idp-vca-service:main-28}]"
+// /usr/local/bin/aws ecs describe-task-definition --task-definition mytask | egrep "revision" | tr "/" " " | awk '{print $2}' | sed 's/,//'
+// aws ecs register-task-definition --cli-input-json file://imagedefinitions.json
+// /usr/local/bin/aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:14
+// family, taskRoleArn, executionRoleArn, networkMode, containerDefinitions, volumes, placementConstraints, requiresCompatibilities, cpu, memory, tags, pidMode, ipcMode, proxyConfiguration, inferenceAccelerators, ephemeralStorage
