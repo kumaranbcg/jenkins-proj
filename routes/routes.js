@@ -10,7 +10,7 @@ router.use((req, res, next) => {
                 <tbody>
                     <tr>
                         <td><b>Server Status</b></td>
-                        <td>: I am working fine</td>
+                        <td>: I am working fine1</td>
                     </tr>
                     <tr>
                         <td><b>Last Code Updated At</b></td>
