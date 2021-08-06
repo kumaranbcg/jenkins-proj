@@ -51,6 +51,7 @@ pipeline {
                  script {
                      withAWS(region: "${AWS_ECR_REGION}", credentials: "${AWS_CRED_ID}") {
                          sh """
+                                set +x
                                 TASK_DEFINITION=\$(aws ecs describe-task-definition --task-definition \${AWS_ECS_TASK_DEFINITION} --region ap-south-1)
                                 TASK_LIST=\$(aws ecs list-tasks --cluster \${AWS_ECS_CLUSTER} --desired-status RUNNING --family \${AWS_ECS_TASK_DEFINITION})
                                 OLD_TASK_ID=\$(echo \${TASK_LIST} | jq -r '.taskArns[0]' | awk -F'/' '{print \$3}')
