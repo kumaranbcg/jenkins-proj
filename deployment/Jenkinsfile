@@ -68,11 +68,12 @@ pipeline {
                     // // def taskRevision = sh(script: "aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\" | tr \"/\" \" \" | awk '{print \$2}' | sed 's/,//'", returnStdout: true)
                     // sh "/usr/local/bin/aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:15"
                     withAWS(region: 'ap-south-1', credentials: 'aws-creds') {
-                        env.taskDefinition = sh(script: "aws ecs describe-task-definition --task-definition mytask --region ap-south-1", returnStdout: true)
-                        env.newtaskDefinition = sh(script: "echo ${env.taskDefinition} | jq --arg IMAGE ${env.IMAGE} '.taskDefinition | .containerDefinitions[0].image = ${env.IMAGE} | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities)", returnStdout: true)
-                        env.newTaskInfo = sh(script: "aws ecs register-task-definition --region ap-south-1 --cli-input-json ${env.newtaskDefinition}", returnStdout: true)
-                        env.newRevision = sh(script: "echo ${env.newTaskInfo} | jq '.taskDefinition.revision'", returnStdout: true)
-                        sh "aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:${env.newRevision}"
+                        taskDefinition = sh(script: "aws ecs describe-task-definition --task-definition mytask --region ap-south-1", returnStdout: true)
+                        sh "echo ${taskDefinition}"
+                        newtaskDefinition = sh(script: "echo ${taskDefinition} | jq --arg IMAGE ${env.IMAGE} '.taskDefinition | .containerDefinitions[0].image = ${env.IMAGE} | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities)", returnStdout: true)
+                        newTaskInfo = sh(script: "aws ecs register-task-definition --region ap-south-1 --cli-input-json ${newtaskDefinition}", returnStdout: true)
+                        newRevision = sh(script: "echo ${newTaskInfo} | jq '.taskDefinition.revision'", returnStdout: true)
+                        sh "aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:${newRevision}"
                     }
                 }
             } // steps end
@@ -94,3 +95,4 @@ pipeline {
 // def newTaskInfo = sh(script: "aws ecs register-task-definition --region ap-south-1 --cli-input-json ${newtaskDefinition}", returnStdout: true)
 // def newRevision = sh(script: "echo ${newTaskInfo} | jq '.taskDefinition.revision'", returnStdout: true)
 // sh "aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:${newRevision}"
+
