@@ -65,7 +65,6 @@ pipeline {
                                 NEW_TASK_INFO=\$(aws ecs register-task-definition --region \${AWS_ECR_REGION} --cli-input-json "\${NEW_TASK_DEFINTIION}")
                                 NEW_REVISION=\$(echo \${NEW_TASK_INFO} | jq '.taskDefinition.revision')
                                 aws ecs update-service --cluster \${AWS_ECS_CLUSTER} --service \${AWS_ECS_SERVICE} --task-definition \${AWS_ECS_TASK_DEFINITION}:\${NEW_REVISION}
-                                set -x
                             """
                      }
                 }
