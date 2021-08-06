@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment {
         BRANCH_NAME = "${GIT_BRANCH.replaceAll('origin/', '')}"
+        AWS_CRED_ID = "aws-creds"
         AWS_ECR_REGION = 'ap-south-1'
         AWS_ECS_SERVICE = 'myservice'
         AWS_ECS_TASK_DEFINITION = 'mytask'
@@ -11,23 +12,20 @@ pipeline {
         AWS_ECS_MEMORY = '512'
         AWS_ECS_CLUSTER = 'ch-dev'
         AWS_ECS_EXECUTION_ROL = 'arn:aws:iam::839316227584:role/ecsTaskExecutionRole'
-        taskDefinition = 'ji'
+        ECR_REPO_URI = "839316227584.dkr.ecr.ap-south-1.amazonaws.com/idp-vca-service"
     }
     stages {
         stage("Env Variables") {
             steps {
                 script {
-					env.ECRREPOURI = "839316227584.dkr.ecr.ap-south-1.amazonaws.com/idp-vca-service"
-					env.DOCKERPUSHURL = "https://839316227584.dkr.ecr.ap-south-1.amazonaws.com/idp-vca-service"
 					sh "cd ${env.WORKSPACE}"
-					echo "branch name : ${env.BRANCH_NAME}"
+					echo "Branch name : ${env.BRANCH_NAME}"
 					env.COMMIT = sh(returnStdout: true, script: 'echo $(git rev-parse --short HEAD)').trim()
 					env.GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim()
 					env.GIT_AUTHOR = sh (script: 'git log -1 --pretty=%cn ${GIT_COMMIT}', returnStdout: true).trim()                    
                     env.TAG = "${env.BRANCH_NAME}" + "-" + "${BUILD_NUMBER}"
 					echo "Tag : ${env.TAG}"
-                    env.IMAGE = "${env.ECRREPOURI}" + ":" + "${env.TAG}"
-                    
+                    env.IMAGE = "${env.ECR_REPO_URI}" + ":" + "${env.TAG}"
                 } //script end           
             } //steps end
         } // env Variables stage end
@@ -35,7 +33,7 @@ pipeline {
             stage("Docker build") {
                 steps {
                     sh """ 
-                        docker build . -t ${env.ECRREPOURI}:${env.TAG} -f ${env.WORKSPACE}/deployment/Dockerfile
+                        docker build . -t ${env.ECR_REPO_URI}:${env.TAG} -f ${env.WORKSPACE}/deployment/Dockerfile
                     """
                 } // steps end
             } // docker build stage end
@@ -44,7 +42,7 @@ pipeline {
             steps
               {
                   script {
-                    withAWS(region: 'ap-south-1', credentials: 'aws-creds') {
+                    withAWS(region: "${AWS_ECR_REGION}", credentials: "${AWS_CRED_ID}") {
                         sh "${ecrLogin()}"
                         docker.image("${env.IMAGE}").push()
                         sh "docker rmi ${env.IMAGE} | true"
@@ -53,19 +51,10 @@ pipeline {
             } // steps end
         } //  docker push stage end
 
-        // stage("Replacing Yaml Variables") {
-        //     steps {
-        //         sh """      
-        //             sed -i "s|CONTAINER_IMAGE|${env.IMAGE}|g" ${env.FILENAME}
-        //             sed -i "s|BRANCH_NAMESPACE|${env.BRANCH_NAME}|g" ${env.FILENAME}
-        //         """
-        //     } //steps end
-        // } //Replacing yaml Variables stage end
-
         stage('Deploy to ECS') {
             steps{
                  script {
-                     withAWS(region: 'ap-south-1', credentials: 'aws-creds') {
+                     withAWS(region: "${AWS_ECR_REGION}", credentials: "${AWS_CRED_ID}") {
                          sh """
                                 TASK_DEFINITION=\$(aws ecs describe-task-definition --task-definition mytask --region ap-south-1)
                                 TASK_LIST=\$(aws ecs list-tasks --cluster mycluster --desired-status RUNNING --family mytask)
@@ -87,15 +76,5 @@ pipeline {
         }
     }
 } //pipeline end
-// aws ecs register-task-definition --family mytask --execution-role-arn arn:a ws:iam::839316227584:role/ecsTaskExecutionRole --requires-compatibilities FARGATE --network-mode awsvpc --cpu 256 --memory 512 --container-definitions "[{ \"name\":\"mytask\",\"image\":\"839316227584.dkr.ecr.ap-south-1.a mazonaws.com:idp-vca-service:main-28}]"
-// /usr/local/bin/aws ecs describe-task-definition --task-definition mytask | egrep "revision" | tr "/" " " | awk '{print $2}' | sed 's/,//'
-// aws ecs register-task-definition --cli-input-json file://imagedefinitions.json
-// /usr/local/bin/aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:14
 
-// family, taskRoleArn, executionRoleArn, networkMode, containerDefinitions, volumes, placementConstraints, requiresCompatibilities, cpu, memory, tags, pidMode, ipcMode, proxyConfiguration, inferenceAccelerators, ephemeralStorage
-// def taskDefinition = sh(script: "aws ecs describe-task-definition --task-definition mytask --region ap-south-1", returnStdout: true)
-// def newtaskDefinition = sh(script: "echo ${taskDefinition} | jq --arg IMAGE ${env.IMAGE} '.taskDefinition | .containerDefinitions[0].image = ${env.IMAGE} | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities)", returnStdout: true)
-// def newTaskInfo = sh(script: "aws ecs register-task-definition --region ap-south-1 --cli-input-json ${newtaskDefinition}", returnStdout: true)
-// def newRevision = sh(script: "echo ${newTaskInfo} | jq '.taskDefinition.revision'", returnStdout: true)
-// sh "aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:${newRevision}"
 
