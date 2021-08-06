@@ -62,23 +62,26 @@ pipeline {
         //     } //steps end
         // } //Replacing yaml Variables stage end
 
-        stage("Deploy in ECS") {
-            steps {
-              script {
-                    // sh "aws ecs register-task-definition --cli-input-json ${WORKSPACE}/deployment/imagedefinitions.json"
-                    // // def taskRevision = sh(script: "aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\" | tr \"/\" \" \" | awk '{print \$2}' | sed 's/,//'", returnStdout: true)
-                    // sh "/usr/local/bin/aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:15"
-                    withAWS(region: 'ap-south-1', credentials: 'aws-creds') {
-                        env.taskDefinition = sh([script: "aws ecs describe-task-definition --task-definition mytask --region ap-south-1", returnStdout: true]).trim()
-                        sh "echo ${env.taskDefinition}"
-                        newtaskDefinition = sh(script: "echo ${env.taskDefinition} | jq --arg IMAGE ${env.IMAGE} '.taskDefinition | .containerDefinitions[0].image = ${env.IMAGE} | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities)", returnStdout: true)
-                        newTaskInfo = sh(script: "aws ecs register-task-definition --region ap-south-1 --cli-input-json ${newtaskDefinition}", returnStdout: true)
-                        newRevision = sh(script: "echo ${newTaskInfo} | jq '.taskDefinition.revision'", returnStdout: true)
-                        sh "aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:${newRevision}"
-                    }
+        stage('Deploy to ECS') {
+            steps{
+                 script {
+                     withAWS(region: 'ap-south-1', credentials: 'aws-creds') {
+                         sh '''
+                            TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition mytask --region ap-south-1)
+                            TASK_LIST=$(aws ecs list-tasks --cluster mycluster --desired-status RUNNING --family mytask)
+                            OLD_TASK_ID=$(echo $TASK_LIST | jq -r '.taskArns[0]' | awk -F'/' '{print $3}')
+                            aws ecs stop-task --region ap-south-1 --cluster mycluster --task $OLD_TASK_ID
+                            NEW_TASK_DEFINTIION=$(echo $TASK_DEFINITION | jq --arg IMAGE ${env.IMAGE} '.taskDefinition' | jq '.containerDefinitions[0].image = ${env.IMAGE}')
+                            NEW_TASK_DEFINTIION=$(echo $NEW_TASK_DEFINTIION | jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
+                            NEW_TASK_INFO=$(aws ecs register-task-definition --region $AWS_DEFAULT_REGION --cli-input-json "$NEW_TASK_DEFINTIION")
+                            NEW_REVISION=$(echo $NEW_TASK_INFO | jq '.taskDefinition.revision')
+                            aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:${NEW_REVISION}
+                            echo $BRANCH_NAME
+                         '''
+                     }
                 }
-            } // steps end
-        } //  k8S deployment file deployment stage end
+            }
+        }
     } //stages end
     post { 
         always { 
@@ -90,6 +93,7 @@ pipeline {
 // /usr/local/bin/aws ecs describe-task-definition --task-definition mytask | egrep "revision" | tr "/" " " | awk '{print $2}' | sed 's/,//'
 // aws ecs register-task-definition --cli-input-json file://imagedefinitions.json
 // /usr/local/bin/aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:14
+
 // family, taskRoleArn, executionRoleArn, networkMode, containerDefinitions, volumes, placementConstraints, requiresCompatibilities, cpu, memory, tags, pidMode, ipcMode, proxyConfiguration, inferenceAccelerators, ephemeralStorage
 // def taskDefinition = sh(script: "aws ecs describe-task-definition --task-definition mytask --region ap-south-1", returnStdout: true)
 // def newtaskDefinition = sh(script: "echo ${taskDefinition} | jq --arg IMAGE ${env.IMAGE} '.taskDefinition | .containerDefinitions[0].image = ${env.IMAGE} | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities)", returnStdout: true)
