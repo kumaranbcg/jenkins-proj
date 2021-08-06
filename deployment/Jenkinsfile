@@ -64,7 +64,7 @@ pipeline {
         stage("Deploy in ECS") {
             steps {
               script {
-                    sh "aws ecs register-task-definition --cli-input-json ${WORKSPACE}/deployment/imagedefinitions.json"
+                    sh "aws ecs register-task-definition --cli-input-json file://${WORKSPACE}/deployment/imagedefinitions.json"
                     // def taskRevision = sh(script: "aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\" | tr \"/\" \" \" | awk '{print \$2}' | sed 's/,//'", returnStdout: true)
                     sh "/usr/local/bin/aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:15"
                 }
