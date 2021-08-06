@@ -11,6 +11,7 @@ pipeline {
         AWS_ECS_MEMORY = '512'
         AWS_ECS_CLUSTER = 'ch-dev'
         AWS_ECS_EXECUTION_ROL = 'arn:aws:iam::839316227584:role/ecsTaskExecutionRole'
+        taskDefinition = 'ji'
     }
     stages {
         stage("Env Variables") {
