@@ -64,9 +64,15 @@ pipeline {
         stage("Deploy in ECS") {
             steps {
               script {
-                    sh "aws ecs register-task-definition --cli-input-json ${WORKSPACE}/deployment/imagedefinitions.json"
-                    // def taskRevision = sh(script: "aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\" | tr \"/\" \" \" | awk '{print \$2}' | sed 's/,//'", returnStdout: true)
-                    sh "/usr/local/bin/aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:15"
+                    // sh "aws ecs register-task-definition --cli-input-json ${WORKSPACE}/deployment/imagedefinitions.json"
+                    // // def taskRevision = sh(script: "aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\" | tr \"/\" \" \" | awk '{print \$2}' | sed 's/,//'", returnStdout: true)
+                    // sh "/usr/local/bin/aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:15"
+
+                    def taskDefinition = sh(script: "aws ecs describe-task-definition --task-definition mytask --region ap-south-1", returnStdout: true)
+                    def newtaskDefinition = sh(script: "echo ${taskDefinition} | jq --arg IMAGE ${env.IMAGE} '.taskDefinition | .containerDefinitions[0].image = ${env.IMAGE} | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities)", returnStdout: true)
+                    def newTaskInfo = sh(script: "aws ecs register-task-definition --region ap-south-1 --cli-input-json ${newtaskDefinition}", returnStdout: true)
+                    def newRevision = sh(script: "echo ${newTaskInfo} | jq '.taskDefinition.revision'", returnStdout: true)
+                    sh "aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:${newRevision}"
                 }
             } // steps end
         } //  k8S deployment file deployment stage end
@@ -82,3 +88,8 @@ pipeline {
 // aws ecs register-task-definition --cli-input-json file://imagedefinitions.json
 // /usr/local/bin/aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:14
 // family, taskRoleArn, executionRoleArn, networkMode, containerDefinitions, volumes, placementConstraints, requiresCompatibilities, cpu, memory, tags, pidMode, ipcMode, proxyConfiguration, inferenceAccelerators, ephemeralStorage
+// def taskDefinition = sh(script: "aws ecs describe-task-definition --task-definition mytask --region ap-south-1", returnStdout: true)
+// def newtaskDefinition = sh(script: "echo ${taskDefinition} | jq --arg IMAGE ${env.IMAGE} '.taskDefinition | .containerDefinitions[0].image = ${env.IMAGE} | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities)", returnStdout: true)
+// def newTaskInfo = sh(script: "aws ecs register-task-definition --region ap-south-1 --cli-input-json ${newtaskDefinition}", returnStdout: true)
+// def newRevision = sh(script: "echo ${newTaskInfo} | jq '.taskDefinition.revision'", returnStdout: true)
+// sh "aws ecs update-service --cluster mycluster --service myservice --task-definition mytask:${newRevision}"
