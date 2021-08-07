@@ -37,6 +37,7 @@
 -   sudo chmod a+rwx /var/lib/jenkins/secrets/
 -   cd /var/lib/jenkins/secrets/
 -   sudo chmod a+rwx ./initialAdminPassword
+-   sudo apt-get install jq
 
 ## AWS CLI Installation Commands
 
