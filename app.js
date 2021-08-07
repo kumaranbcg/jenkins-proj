@@ -19,7 +19,7 @@ app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Headers", "*");
     next();
 });
-app.get("/service-1", (req, res) => {
+app.get("/myservice", (req, res) => {
     return res.send("Its service 1234234");
 });
 app.use(routers);
