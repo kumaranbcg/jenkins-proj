@@ -1,9 +1,8 @@
 ## JDK Installation Commands
 
--   sudo apt update
 -   sudo apt search openjdk
--   sudo apt install openjdk-11-jdk
--   java -version
+-   sudo apt install default-jdk-headless
+-   java --version
 
 ## Jenkins Installation Commands
 
