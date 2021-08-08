@@ -19,9 +19,6 @@ app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Headers", "*");
     next();
 });
-app.get("/myservice", (req, res) => {
-    return res.send("Its service 1234234");
-});
 app.use(routers);
 
 const port = process.env.PORT || 3000;

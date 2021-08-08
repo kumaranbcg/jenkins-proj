@@ -28,7 +28,6 @@
         "dotenv": "^8.6.0",
         "express": "^4.17.1",
         "helmet": "^3.23.3",
-        "moment": "^2.27.0",
         "morgan": "^1.10.0"
     },
     "devDependencies": {}

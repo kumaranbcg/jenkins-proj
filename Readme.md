@@ -28,6 +28,13 @@
 -   sudo systemctl enable docker
 -   docker --version
 
+## AWS CLI Installation Commands
+
+-   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+-   sudo apt install unzip
+-   unzip awscliv2.zip
+-   sudo ./aws/install
+
 ## Add Permission to user to access Jenkins and Docker
 
 -   sudo groupadd docker
@@ -38,10 +45,3 @@
 -   cd /var/lib/jenkins/secrets/
 -   sudo chmod a+rwx ./initialAdminPassword
 -   sudo apt-get install jq
-
-## AWS CLI Installation Commands
-
--   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
--   sudo apt install unzip
--   unzip awscliv2.zip
--   sudo ./aws/install
