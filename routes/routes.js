@@ -4,6 +4,6 @@ router.get("/myservice-1", (err, res) => {
     return res.send("I am Service 1");
 });
 router.get("/myservice-1/hello", (err, res) => {
-    return res.send("Saying hello...");
+    return res.send("Saying bye...");
 });
 module.exports = router;
