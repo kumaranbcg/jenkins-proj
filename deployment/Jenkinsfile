@@ -7,7 +7,7 @@ pipeline {
         AWS_ECS_CLUSTER = 'mycluster'
         AWS_ECS_SERVICE = 'myservice'
         AWS_ECS_TASK_DEFINITION = 'mytask'
-        ECR_REPO_URI = "839316227584.dkr.ecr.ap-south-1.amazonaws.com/ecs-cicd-nginx"
+        ECR_REPO_URI = "839316227584.dkr.ecr.ap-south-1.amazonaws.com/myrepo"
     }
     stages {
         stage("Env Variables") {
