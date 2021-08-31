@@ -1,9 +1,5 @@
 ## JDK Installation Commands
-     - ## JDK Installation Commands
 
-          -   sudo apt search openjdk
-          -   sudo apt install default-jdk-headless
-          -   java --version
 -   sudo apt search openjdk
 -   sudo apt install default-jdk-headless
 -   java --version
