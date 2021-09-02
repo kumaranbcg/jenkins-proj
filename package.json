@@ -10,14 +10,7 @@
         ]
     },
     "scripts": {
-        "start": "node app.js",
-        "localdev": "cross-env NODE_ENV=localdev cross-env DB_NAME=VCA cross-env DEV_DB_USERNAME=root cross-env DEV_DB_PASSWORD= cross-env DEV_DB_HOST=localhost node app.js",
-        "qa": "cross-env NODE_ENV=qa cross-env DB_NAME=VCA cross-env DEV_DB_USERNAME=admin cross-env cross-env DEV_DB_PASSWORD=Amtex4ClientA2TNRTP42Aws DEV_DB_HOST=tnrtp-qa.cftg9stc20rq.ap-south-1.rds.amazonaws.com node app.js",
-        "staging": "cross-env NODE_ENV=staging cross-env DB_NAME=VCA cross-env DEV_DB_USERNAME=admin cross-env DEV_DB_PASSWORD=Amtex4ClientA2TNRTP42Aws cross-env DEV_DB_HOST=tnrtp-stage-new.cftg9stc20rq.ap-south-1.rds.amazonaws.com node app.js",
-        "development": "cross-env NODE_ENV=development cross-env DB_NAME=VCA cross-env DEV_DB_USERNAME=admin cross-env DEV_DB_PASSWORD=Amtex4ClientA2TNRTP42Aws cross-env DEV_DB_HOST=tnrtp-stage-new.cftg9stc20rq.ap-south-1.rds.amazonaws.com node app.js",
-        "production": "cross-env NODE_ENV=production cross-env DB_NAME=VCA cross-env DEV_DB_USERNAME=admin cross-env DEV_DB_PASSWORD=Amtex4ClientA2TNRTP42Aws cross-env DEV_DB_HOST=tnrtp-prod.cftg9stc20rq.ap-south-1.rds.amazonaws.com node app.js",
-        "test": "cross-env NODE_ENV=test cross-env PORT=3000 cross-env DB_NAME=VCA_TEST cross-env DEV_DB_USERNAME=root cross-env DEV_DB_PASSWORD= cross-env DEV_DB_HOST=localhost npx sequelize-cli db:drop && cross-env NODE_ENV=test cross-env PORT=3000 cross-env DB_NAME=VCA_TEST cross-env DEV_DB_USERNAME=root cross-env DEV_DB_PASSWORD= cross-env DEV_DB_HOST=localhost npx sequelize-cli db:create && cross-env NODE_ENV=test cross-env PORT=3000 cross-env DB_NAME=VCA_TEST cross-env DEV_DB_USERNAME=root cross-env DEV_DB_PASSWORD= cross-env DEV_DB_HOST=localhost npx sequelize-cli db:migrate && cross-env NODE_ENV=test cross-env PORT=3000 cross-env DB_NAME=VCA_TEST cross-env DEV_DB_USERNAME=root cross-env DEV_DB_PASSWORD= cross-env DEV_DB_HOST=localhost npx sequelize-cli db:seed:all && cross-env NODE_ENV=test cross-env PORT=3000 cross-env DB_NAME=VCA_TEST cross-env DEV_DB_USERNAME=root cross-env DEV_DB_PASSWORD= cross-env DEV_DB_HOST=localhost jest --coverage && cross-env NODE_ENV=test cross-env PORT=3000 cross-env DB_NAME=VCA_TEST cross-env DEV_DB_USERNAME=root cross-env DEV_DB_PASSWORD= cross-env DEV_DB_HOST=localhost npx sequelize-cli db:drop",
-        "lint": "eslint --fix --config .eslintrc.json \"**/*.js\""
+        "start": "node app.js"
     },
     "author": "Kumaran",
     "license": "ISC",

@@ -1,5 +1,2 @@
 .vscode
-logs
-coverage
-.eslintrc.json
 node_modules
