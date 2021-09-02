@@ -5,6 +5,11 @@ const helmet = require("helmet");
 let routers = require("./routes/routes.js");
 const app = express();
 const morgan = require("morgan");
+const fs = require("fs");
+if (fs.existsSync(process.env.DB_PASSWORD)) {
+    process.env.DB_USERNAME = fs.readFileSync(`${process.env.DB_USERNAME}`, { encoding: "utf8" });
+    process.env.DB_PASSWORD = fs.readFileSync(`${process.env.DB_PASSWORD}`, { encoding: "utf8" });
+}
 // middle wares section
 app.enable("trust proxy");
 app.use(morgan("dev"));

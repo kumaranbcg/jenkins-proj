@@ -26,8 +26,8 @@ services:
                 order: start-first
         environment:
             NODE_ENV: development
-            DB_USERNAME: C:\ProgramData\Docker\secrets\dbusername
-            DB_PASSWORD: C:\ProgramData\Docker\secrets\dbpassword
+            DB_USERNAME: /run/secrets/dbusername
+            DB_PASSWORD: /run/secrets/dbpassword
         secrets:
             - dbusername
             - dbpassword
